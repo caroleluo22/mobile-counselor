@@ -1,0 +1,7 @@
+{
+  "name": "AdmissionAI",
+  "description": "A comprehensive mobile-first AI college admission counselor helping students with self-discovery, college finding, application planning, essays, and interview preparation.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
