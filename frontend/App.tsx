@@ -1385,7 +1385,6 @@ const App: React.FC = () => {
   const [resumeEssayId, setResumeEssayId] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!process.env.API_KEY) setApiKeyMissing(true);
     const checkUser = async () => {
       try {
         // The authService.loginSuccess() function returns the user object directly, or null.

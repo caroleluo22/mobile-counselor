@@ -1,4 +1,6 @@
-require('dotenv').config();
+const path = require('path');
+// Load environment variables from .env file. This MUST be the first line.
+require('dotenv').config({ path: path.resolve(__dirname, './.env') });
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -9,7 +11,7 @@ const roadmapRoutes = require('./routes/roadmap.routes');
 const readinessRoutes = require('./routes/readiness.routes');
 const profileRoutes = require('./routes/profile.routes');
 const essayRoutes = require('./routes/essay.routes');
-const path = require('path'); // Add the path module
+const geminiController = require('./controllers/gemini.controller'); // Import the AI controller
 require('./config/passport-setup'); // This will run the passport configuration
 
 const app = express();
@@ -18,6 +20,14 @@ const PORT = process.env.PORT || 5000;
 // Trust the first proxy in front of the app. This is crucial for secure cookies in production.
 // It allows Express to correctly determine the protocol (http vs https) from headers like X-Forwarded-Proto.
 app.set('trust proxy', 1);
+
+// --- CORS Configuration ---
+// This MUST be placed before your session and passport middleware and before your routes.
+app.use(cors({
+  origin: 'http://localhost:3000', // The origin of your frontend app
+  credentials: true, // Allow cookies and authorization headers to be sent
+}));
+
 
 // Replaced cookie-session with express-session
 app.use(session({
@@ -44,6 +54,8 @@ app.use('/api/roadmap', roadmapRoutes);
 app.use('/api/readiness', readinessRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/essays', essayRoutes);
+// Add the route for the Gemini proxy
+app.post('/api/gemini-proxy', geminiController.proxyRequest);
 
 // --- Serve Frontend Static Files ---
 // This serves your frontend's built files (HTML, CSS, JS, images, etc.)
