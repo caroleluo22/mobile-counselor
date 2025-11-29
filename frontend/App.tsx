@@ -10,6 +10,7 @@ import * as RoadmapService from './services/roadmapService';
 import * as ReadinessService from './services/readinessService';
 import * as ProfileService from './services/profileService';
 import * as EssayService from './services/essayService';
+import * as PostService from './services/postService';
 
 // --- Helper Components ---
 
@@ -1356,7 +1357,10 @@ const App: React.FC = () => {
   const [roadmap, setRoadmap] = useState<RoadmapItem[]>([]);
   const [roadmapLoading, setRoadmapLoading] = useState(false);
   const [scholarships, setScholarships] = useState<Scholarship[]>(MOCK_SCHOLARSHIPS);
-  const [posts, setPosts] = useState<ForumPost[]>(MOCK_FORUM_POSTS);
+  const [posts, setPosts] = useState<ForumPost[]>([]);
+  const [postPage, setPostPage] = useState(1);
+  const [hasMorePosts, setHasMorePosts] = useState(true);
+  const [postsLoading, setPostsLoading] = useState(false);
   const [essays, setEssays] = useState<Essay[]>([
       { id: '1', collegeName: 'MIT', prompt: 'Tell us about a challenge...', content: '', lastEdited: new Date() },
       { id: '2', collegeName: 'Stanford', prompt: 'What matters to you, and why?', content: '', lastEdited: new Date() }
@@ -1473,6 +1477,24 @@ const App: React.FC = () => {
     };
     loadEssays();
   }, [user]);
+
+  const loadPosts = async (page: number) => {
+    setPostsLoading(true);
+    try {
+      const { posts: newPosts, hasMore } = await PostService.fetchPosts(page);
+      setPosts(prev => page === 1 ? newPosts : [...prev, ...newPosts]);
+      setHasMorePosts(hasMore);
+    } catch (error) {
+      console.error('Failed to load posts', error);
+    } finally {
+      setPostsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    // Initial load of posts
+    loadPosts(1);
+  }, []); // Empty dependency array ensures this runs only once on mount
 
   // Reset training tab when navigating away
   useEffect(() => {
@@ -1695,50 +1717,32 @@ const App: React.FC = () => {
 
   const handleCreatePost = async (e: React.FormEvent) => {
       e.preventDefault();
-      if (!newPost.title.trim() || !newPost.content.trim() || !user) return;
-      
-      const post: ForumPost = {
-          id: Date.now().toString(),
-          author: user.displayName,
-          title: newPost.title,
-          content: newPost.content,
-          category: newPost.category,
-          likes: 0,
-          timestamp: new Date(),
-          replies: []
-      };
-
-      setPosts(prev => [post, ...prev]);
-      setIsPosting(false);
-      setNewPost({ title: '', content: '', category: 'Academics' });
-
+      if (!newPost.title.trim() || !newPost.content.trim()) return;
       try {
+        const createdPost = await PostService.createPost({ title: newPost.title, content: newPost.content, category: newPost.category });
+        setPosts(prev => [createdPost, ...prev]);
+        setIsPosting(false);
+        setNewPost({ title: '', content: '', category: 'Academics' });
+
         // AI Auto-Reply
-        const reply = await Gemini.replyToForumPost(post.title, post.content);
-        setPosts(current => current.map(p => p.id === post.id ? { ...p, aiReply: reply } : p));
+        const aiReply = await Gemini.replyToForumPost(createdPost.title, createdPost.content);
+        const updatedPost = await PostService.updateWithAIReply(createdPost.id, aiReply);
+        setPosts(current => current.map(p => p.id === updatedPost.id ? updatedPost : p));
       } catch (err) {
-        console.error("AI reply failed", err);
+        console.error("Failed to create post or get AI reply", err);
       }
   };
 
-  const handleSubmitReply = (postId: string) => {
+  const handleSubmitReply = async (postId: string) => {
     if (!replyContent.trim() || !user) return;
-    const reply: ForumReply = {
-        id: Date.now().toString(),
-        author: user.displayName,
-        content: replyContent,
-        timestamp: new Date()
-    };
-    
-    setPosts(posts.map(p => {
-        if (p.id === postId) {
-            return { ...p, replies: [...p.replies, reply] };
-        }
-        return p;
-    }));
-    
-    setActiveReplyId(null);
-    setReplyContent('');
+    try {
+        const updatedPost = await PostService.addReply(postId, replyContent);
+        setPosts(posts.map(p => p.id === postId ? updatedPost : p));
+        setActiveReplyId(null);
+        setReplyContent('');
+    } catch (error) {
+        console.error('Failed to submit reply', error);
+    }
   };
 
   if (apiKeyMissing) return <div className="p-10 text-center text-red-600 font-bold">API Key Missing</div>;
@@ -1938,6 +1942,20 @@ const App: React.FC = () => {
                                    )}
                                </div>
                            ))}
+
+                           {hasMorePosts && (
+                               <div className="mt-6 text-center">
+                                   <button
+                                       onClick={() => {
+                                           const nextPage = postPage + 1;
+                                           setPostPage(nextPage);
+                                           loadPosts(nextPage);
+                                       }}
+                                       disabled={postsLoading}
+                                       className="bg-white text-indigo-600 px-6 py-2 rounded-full text-xs font-bold border border-gray-200 shadow-sm hover:bg-indigo-50 disabled:opacity-50"
+                                   >{postsLoading ? 'Loading...' : 'Load More'}</button>
+                               </div>
+                           )}
                        </div>
                    </div>
                </div>
