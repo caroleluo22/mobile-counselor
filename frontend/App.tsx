@@ -1791,12 +1791,6 @@ const App: React.FC = () => {
                             Welcome! Your admissions journey starts here.
                         </p>
                    </div>
-                   <button 
-                        onClick={AuthService.logout}
-                        className="bg-red-100 text-red-700 px-4 py-2 rounded-lg text-xs font-bold shadow-sm hover:bg-red-200 transition-colors"
-                   >
-                       Logout
-                   </button>
                </div>
                <div className="flex-1 overflow-y-auto">
                    {/* Quick Actions */}

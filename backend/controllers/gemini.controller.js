@@ -37,9 +37,16 @@ exports.proxyRequest = async (req, res) => {
         // Otherwise, make a simple, single-turn request.
         const result = await model.generateContent(prompt);
         const response = await result.response;
-        const text = response.text();
+        let text = response.text();
 
-        return res.status(200).json(text);
+        // Attempt to parse the AI's response as JSON.
+        try {
+            // Clean the text to remove markdown code fences if they exist
+            text = text.replace(/```json\n/g, '').replace(/\n```/g, '');
+            return res.status(200).json(JSON.parse(text));
+        } catch (e) {
+            return res.status(200).json(text); // If parsing fails, send the raw text.
+        }
 
     } catch (error) {
         console.error('Error in Gemini proxy controller:', error);
