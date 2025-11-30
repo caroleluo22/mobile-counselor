@@ -427,7 +427,7 @@ const CollegeFinderView: React.FC<{
                             )}
                             <div className="mt-3 flex gap-2">
                                 <button onClick={(e) => { e.stopPropagation(); onChat(`Tell me specific details about ${c.name}'s CS program.`); }} className="flex-1 py-2 bg-indigo-50 text-indigo-700 text-xs font-bold rounded">Details</button>
-                                <button onClick={(e) => { e.stopPropagation(); onChat(`What is the application deadline for ${c.name}?`); }} className="flex-1 py-2 bg-indigo-50 text-indigo-700 text-xs font-bold rounded">Deadlines</button>
+                                <button onClick={(e) => { e.stopPropagation(); onChat(`What are the application process, deadlines, and official application portal URL for ${c.name}?`); }} className="flex-1 py-2 bg-indigo-50 text-indigo-700 text-xs font-bold rounded">Application &amp; Deadlines</button>
                             </div>
                         </div>
                     </div>
