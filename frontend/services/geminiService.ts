@@ -151,9 +151,9 @@ export const assessReadiness = async (profile: StudentProfile, targetUniversity:
     }
 };
 
-export const generateRoadmap = async (profile: StudentProfile): Promise<{ milestones: any[] }> => {
+export const generateRoadmap = async (profile: StudentProfile, query: string): Promise<{ milestones: any[] }> => {
     const prompt = `
-        Generate a college application roadmap for this student: ${JSON.stringify(profile)}.
+        Generate a college application roadmap for this student: ${JSON.stringify(profile)}, focusing on this specific goal: "${query}".
         Return the response as a single JSON object with one key: "milestones". The value of "milestones" should be an array of objects, where each object has the keys: "title", "description", and "timeline".
         If you cannot generate a roadmap, return an object with an empty milestones array: { "milestones": [] }.
     `;

@@ -810,7 +810,9 @@ const PlanningView: React.FC<{
     onToggleStatus: (id: string) => Promise<void>;
     onRequestConsultation: () => void;
     isLoading: boolean;
-}> = ({ roadmap, onGenerate, isTyping, onAddTask, onUpdateTask, onDeleteTask, onToggleStatus, onRequestConsultation, isLoading }) => {
+    roadmapQuery: string;
+    setRoadmapQuery: (query: string) => void;
+}> = ({ roadmap, onGenerate, isTyping, onAddTask, onUpdateTask, onDeleteTask, onToggleStatus, onRequestConsultation, isLoading, roadmapQuery, setRoadmapQuery }) => {
     const [isAdding, setIsAdding] = useState(false);
     const [editingId, setEditingId] = useState<string | null>(null);
     const [tempItem, setTempItem] = useState<Partial<RoadmapItem>>({});
@@ -883,10 +885,19 @@ const PlanningView: React.FC<{
                     <button onClick={() => setIsAdding(!isAdding)} className="text-xs bg-indigo-600 text-white px-3 py-1 rounded-full font-bold shadow-sm">
                         {isAdding ? 'Cancel' : '+ Add Task'}
                     </button>
-                    <button onClick={onGenerate} className="text-xs bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full font-bold">
-                        {isTyping ? 'Generating...' : 'AI Refresh'}
-                    </button>
                 </div>
+            </div>
+
+            <div className="bg-white p-3 rounded-xl shadow-sm border border-gray-200 mb-6 flex gap-2">
+                <input 
+                    className="flex-1 text-sm border-gray-200 rounded-lg px-3 py-2 focus:outline-none" 
+                    placeholder="e.g., Plan for early admission to UPenn" 
+                    value={roadmapQuery}
+                    onChange={(e) => setRoadmapQuery(e.target.value)}
+                />
+                <button onClick={onGenerate} disabled={isTyping || !roadmapQuery} className="text-xs bg-indigo-600 text-white px-4 py-2 rounded-lg font-bold disabled:bg-indigo-300">
+                    {isTyping ? 'Generating...' : 'Generate Plan'}
+                </button>
             </div>
 
             {/* Add Item Form */}
@@ -1385,6 +1396,7 @@ const App: React.FC = () => {
   const [collegeLoading, setCollegeLoading] = useState(false);
   const [roadmap, setRoadmap] = useState<RoadmapItem[]>([]);
   const [roadmapLoading, setRoadmapLoading] = useState(false);
+  const [roadmapQuery, setRoadmapQuery] = useState('');
   const [scholarships, setScholarships] = useState<Scholarship[]>(MOCK_SCHOLARSHIPS);
   const [posts, setPosts] = useState<ForumPost[]>([]);
   const [postPage, setPostPage] = useState(1);
@@ -1600,7 +1612,7 @@ const App: React.FC = () => {
 
   const handleRoadmapGen = async () => {
       setIsTyping(true);
-      const data = await Gemini.generateRoadmap(profile);
+      const data = await Gemini.generateRoadmap(profile, roadmapQuery);
       if (data && data.milestones) {
           const generated: RoadmapItem[] = data.milestones.map((m: any, i: number) => ({
               id: `gen-${Date.now()}-${i}`,
@@ -2072,6 +2084,8 @@ const App: React.FC = () => {
                onToggleStatus={handleToggleRoadmapStatus}
                onRequestConsultation={handleConsultationRequest}
                isLoading={roadmapLoading}
+               roadmapQuery={roadmapQuery}
+               setRoadmapQuery={setRoadmapQuery}
            />
        )}
 
