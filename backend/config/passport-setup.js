@@ -13,7 +13,7 @@ passport.deserializeUser((id, done) => {
 });
 
 const PORT = process.env.PORT || 5000;
-const CALLBACK_URL = process.env.NODE_ENV === 'production' ? `https://your-production-domain.com/auth/google/callback` : `http://localhost:${PORT}/auth/google/callback`;
+const CALLBACK_URL = process.env.NODE_ENV === 'production' ? `https://www.icycorn.com/auth/google/callback` : `http://localhost:${PORT}/auth/google/callback`;
 
 passport.use(
     new GoogleStrategy({
