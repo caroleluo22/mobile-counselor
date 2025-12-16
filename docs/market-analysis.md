@@ -29,6 +29,13 @@ That is attractive.
 
 ## **2. Market Size (TAM / SAM / SOM)**
 
+Common App's impact on students and those who support them is humbling, and our work isn’t done. In 2024–2025 we saw: 
+
+More than 10.1 million applications submitted through Common App.
+More than 7.2 million recommendations were submitted on behalf of students.
+More than $178.7 million in fee waivers were provided by Common App members to students in need.
+More than 1.4 million unique applicants — more than a third of whom are first-generation — from more than 200 countries and territories.
+
 ### **TAM — Total Addressable Market**
 
 **Global admissions + test prep market:**
