@@ -1,0 +1,224 @@
+# **AI Admissions Copilot — Technical Architecture Overview**
+
+---
+
+## **1. System Overview**
+
+AI Admissions Copilot is built as a **modular, cloud-native AI system** designed to deliver personalized guidance at scale while maintaining accuracy, reliability, and cost efficiency.
+
+At a high level, the system consists of five layers:
+
+1. **Client Layer** (Web app + Browser extension)
+2. **API & Backend Layer** (Node.js / Express)
+3. **AI Agent & Orchestration Layer**
+4. **Knowledge & Data Layer**
+5. **Infrastructure & Security Layer**
+
+This architecture enables the platform to move beyond “AI advice” into **real workflow execution**.
+
+---
+
+## **2. Client Layer**
+
+### Web Application (React)
+
+* Student dashboard
+* Profile builder
+* Essay editor
+* Application tracker
+* Parent summary views
+
+### Browser Extension (Execution Moat)
+
+* Runs directly inside:
+
+  * university admissions websites
+  * CommonApp / OUAC / UC Apply portals
+* Reads live page content
+* Sends contextual data to backend AI agents
+* Receives structured instructions:
+
+  * explanations
+  * autofill plans
+  * warnings & checks
+
+**Why this matters:**
+Most competitors stop at advice. The extension allows the AI to **act inside real systems**.
+
+---
+
+## **3. Backend & API Layer**
+
+### Core Backend
+
+* **Node.js + Express**
+* Acts as the single orchestration point for:
+
+  * authentication
+  * user profiles
+  * applications
+  * AI agent execution
+  * extension communication
+
+### Responsibilities
+
+* Request validation & routing
+* Authorization (student / parent / admin)
+* Data aggregation for AI agents
+* Logging, monitoring, and analytics
+
+The backend is designed as a **modular monolith initially**, with clean boundaries that allow future service separation as scale increases.
+
+---
+
+## **4. AI Agent Architecture (Core Innovation)**
+
+Instead of one generic AI assistant, the system uses **specialized AI agents**, each responsible for a well-defined task.
+
+### Key Agents
+
+* **Strategy Agent**
+  Generates personalized admissions plans based on profile, targets, and constraints.
+
+* **Essay Brainstorm & Review Agents**
+  Help students identify story angles, structure essays, and refine narratives using rubric-based feedback.
+
+* **Policy Explainer Agent**
+  Translates complex admissions and financial aid policies into plain language, contextualized for the student.
+
+* **School Selector Agent**
+  Matches students to programs based on competitiveness, preferences, and goals.
+
+* **Application Autofill Agent**
+  Generates structured autofill plans for application portals, enabling browser-level execution.
+
+* **Parent Summary Agent**
+  Produces concise progress updates for parents.
+
+### Orchestration
+
+A central **Agent Orchestrator** coordinates:
+
+* which agents to call,
+* what data to retrieve,
+* how to assemble final outputs.
+
+This modular approach allows rapid improvement and experimentation without destabilizing the system.
+
+---
+
+## **5. Knowledge & Data Layer**
+
+### Structured Data (MongoDB)
+
+Stores:
+
+* user profiles
+* applications & deadlines
+* essays & versions
+* school and program metadata
+* portal schemas for application systems
+
+### Admissions Knowledge Base (RAG)
+
+* Curated content from:
+
+  * official university admissions pages
+  * financial aid policies
+  * program-specific requirements
+  * internal frameworks and templates
+* Content is chunked, embedded, and indexed using **vector search** (MongoDB Atlas Vector Search or equivalent).
+
+**Why RAG matters:**
+Admissions policies change frequently. Retrieval ensures:
+
+* up-to-date answers
+* reduced hallucinations
+* source-controlled responses
+
+---
+
+## **6. Execution Layer (Autofill & Automation)**
+
+The **Application Autofill Agent** bridges AI reasoning and real-world execution:
+
+1. Backend generates a structured autofill plan
+2. Browser extension maps plan → live form fields
+3. User reviews and confirms
+4. Extension executes field population safely
+
+This enables:
+
+* error reduction
+* massive time savings
+* consistency across applications
+
+This execution capability represents a significant technical and competitive moat.
+
+---
+
+## **7. Infrastructure & Security**
+
+### Infrastructure
+
+* Containerized services (Docker)
+* Cloud deployment (AWS / GCP / Azure compatible)
+* Scalable horizontally as usage grows
+
+### Security & Privacy
+
+* Role-based access control
+* Encrypted data at rest and in transit
+* No blind form submission without user confirmation
+* Audit logs for agent actions
+
+Student data is treated as **high-sensitivity educational data**, with strict access controls.
+
+---
+
+## **8. Scalability & Reliability**
+
+The system is designed to:
+
+* scale to millions of users
+* reuse AI outputs efficiently
+* cache frequently requested knowledge
+* degrade gracefully under load
+
+As usage increases:
+
+* AI costs scale sub-linearly
+* human involvement does not increase proportionally
+* margins expand over time
+
+---
+
+## **9. Why This Architecture Wins**
+
+* **Accuracy:** Grounded in real policies, not AI guesses
+* **Execution:** Acts inside real systems, not just chat
+* **Scalability:** Software-first, not labor-first
+* **Defensibility:** Browser automation + domain intelligence
+* **Extensibility:** Easily expands to scholarships, internships, grad school
+
+This is not a prompt wrapper.
+It is **admissions infrastructure**.
+
+---
+
+### ✅ How to use this document
+
+* Include in your **investor data room**
+* Send to **technical partners / technical VCs**
+* Reference during diligence calls
+
+---
+
+## 🎯 You now have the FULL investor package
+
+You now have:
+✔ Pitch Deck
+✔ Investor Memo
+✔ Financial Model
+✔ One-Page Executive Summary
+✔ Technical Architecture Overview
